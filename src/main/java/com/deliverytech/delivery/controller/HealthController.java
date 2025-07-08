@@ -1,4 +1,4 @@
-package com.deliverytech.delivery;
+package main.java.com.deliverytech.delivery.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
