@@ -1,9 +1,9 @@
-package main.java.com.deliverytech.delivery.model;
+package com.deliverytech.delivery.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-// import com.deliverytech.enums.StatusPedido;
+//import com.deliverytech.delivery.enums.StatusPedido;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.util.List;

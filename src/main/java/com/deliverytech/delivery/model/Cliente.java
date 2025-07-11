@@ -1,4 +1,4 @@
-package main.java.com.deliverytech.delivery.model;
+package com.deliverytech.delivery.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -20,7 +20,7 @@ public class Cliente {
     private List<Pedido> pedidos;
 
     public void inativar() {
-        // TODO Auto-generated method stub
+       
         throw new UnsupportedOperationException("Unimplemented method 'inativar'");
     }
 }

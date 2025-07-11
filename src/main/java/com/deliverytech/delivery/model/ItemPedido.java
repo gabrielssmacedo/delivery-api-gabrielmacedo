@@ -1,4 +1,4 @@
-package main.java.com.deliverytech.delivery.model;
+package com.deliverytech.delivery.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
