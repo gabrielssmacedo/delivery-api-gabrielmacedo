@@ -5,6 +5,7 @@ import com.deliverytech.delivery.service.ClienteService;
 import com.deliverytech.delivery.repository.ClienteRepository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ClienteServiceImpl implements ClienteService {
 
+    @Autowired
     private final ClienteRepository clienteRepository;
 
     @Override

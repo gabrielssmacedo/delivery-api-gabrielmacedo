@@ -4,6 +4,7 @@ import com.deliverytech.delivery.model.Restaurante;
 import com.deliverytech.delivery.repository.RestauranteRepository;
 import com.deliverytech.delivery.service.RestauranteService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RestauranteServiceImpl implements RestauranteService {
 
+    @Autowired
     private final RestauranteRepository restauranteRepository;
 
     @Override

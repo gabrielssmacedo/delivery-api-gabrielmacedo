@@ -4,5 +4,5 @@ public enum Role {
     CLIENTE,
     RESTAURANTE,
     ADMIN,
-    ENTREGADOR
+    ENTREGADOR;
 }

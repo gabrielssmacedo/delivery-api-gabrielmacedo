@@ -2,7 +2,6 @@ package com.deliverytech.delivery.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import javax.management.relation.Role;
 import java.time.LocalDateTime;
 

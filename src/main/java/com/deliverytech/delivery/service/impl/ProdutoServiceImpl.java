@@ -4,6 +4,7 @@ import com.deliverytech.delivery.model.Produto;
 import com.deliverytech.delivery.repository.ProdutoRepository;
 import com.deliverytech.delivery.service.ProdutoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProdutoServiceImpl implements ProdutoService {
 
+    @Autowired
     private final ProdutoRepository produtoRepository;
 
     @Override

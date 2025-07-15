@@ -5,6 +5,7 @@ import com.deliverytech.delivery.model.StatusPedido;
 import com.deliverytech.delivery.repository.PedidoRepository;
 import com.deliverytech.delivery.service.PedidoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PedidoServiceImpl implements PedidoService {
 
+    @Autowired
     private final PedidoRepository pedidoRepository;
 
     @Override
