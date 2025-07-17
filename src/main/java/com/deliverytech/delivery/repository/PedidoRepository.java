@@ -1,7 +1,7 @@
 package com.deliverytech.delivery.repository;
 
-import com.deliverytech.delivery.model.Pedido;
-import com.deliverytech.delivery.model.StatusPedido;
+import com.deliverytech.delivery.entity.Pedido;
+import com.deliverytech.delivery.entity.StatusPedido;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,7 +11,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Repository
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
     List<Pedido> findByClienteId(Long clienteId);
     List<Pedido> findByRestauranteId(Long restauranteId);
@@ -19,11 +18,10 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
     List<Pedido> findByDataPedidoBetween(LocalDateTime inicio, LocalDateTime fim);
 
     //=== CONSULTAS CUSTOMIZADAS ===
-
     @Query("SELECT p.restaurante.nome, SUM(p.valorTotal) " +
-                  "FROM Pedido p " +
-                  "GROUP BY p.restaurante.nome " +
-                  "ORDER BY SUM(p.valorTotal) DESC")
+            "FROM Pedido p " +
+            "GROUP BY p.restaurante.nome " +
+            "ORDER BY SUM(p.valorTotal) DESC")
     List<Object[]> calcularTotalVendasPorRestaurante();
 
     @Query("SELECT p FROM Pedido p WHERE p.valorTotal > :valor ORDER BY p.valorTotal DESC")
@@ -37,5 +35,12 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
             @Param("inicio") LocalDateTime inicio,
             @Param("fim") LocalDateTime fim,
             @Param("status") StatusPedido status);
+
+    @Query("SELECT p.restaurante.nome as nomeRestaurante, " +
+            "SUM(p.valorTotal) as totalVendas, " +
+            "COUNT(p.id) as quantidadePedidos " +
+            "FROM Pedido p " +
+            "GROUP BY p.restaurante.nome")
+    List<RelatorioVendas> obterRelatorioVendasPorRestaurante();
 }
 

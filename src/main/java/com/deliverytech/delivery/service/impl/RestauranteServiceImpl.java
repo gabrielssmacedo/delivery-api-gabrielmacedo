@@ -1,12 +1,12 @@
 package com.deliverytech.delivery.service.impl;
 
-import com.deliverytech.delivery.model.Restaurante;
+import com.deliverytech.delivery.entity.Restaurante;
 import com.deliverytech.delivery.repository.RestauranteRepository;
 import com.deliverytech.delivery.service.RestauranteService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +14,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RestauranteServiceImpl implements RestauranteService {
 
-    @Autowired
     private final RestauranteRepository restauranteRepository;
 
     @Override
@@ -40,13 +39,37 @@ public class RestauranteServiceImpl implements RestauranteService {
     @Override
     public Restaurante atualizar(Long id, Restaurante atualizado) {
         return restauranteRepository.findById(id)
-            .map(r -> {
-                r.setNome(atualizado.getNome());
-                r.setTelefone(atualizado.getTelefone());
-                r.setCategoria(atualizado.getCategoria());
-                r.setTaxaEntrega(atualizado.getTaxaEntrega());
-                r.setTempoEntregaMinutos(atualizado.getTempoEntregaMinutos());
-                return restauranteRepository.save(r);
-            }).orElseThrow(() -> new RuntimeException("Restaurante não encontrado"));
+                .map(r -> {
+                    r.setNome(atualizado.getNome());
+                    r.setTelefone(atualizado.getTelefone());
+                    r.setCategoria(atualizado.getCategoria());
+                    r.setTaxaEntrega(atualizado.getTaxaEntrega());
+                    r.setTempoEntregaMinutos(atualizado.getTempoEntregaMinutos());
+                    return restauranteRepository.save(r);
+                }).orElseThrow(() -> new RuntimeException("Restaurante não encontrado"));
+    }
+
+    @Override
+    public List<Restaurante> listarAtivos() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'listarAtivos'");
+    }
+
+    @Override
+    public List<Restaurante> buscarPorAvaliacao(BigDecimal minAvaliacao) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'buscarPorAvaliacao'");
+    }
+
+    @Override
+    public List<Restaurante> buscarPorTaxaEntrega(BigDecimal maxTaxa) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'buscarPorTaxaEntrega'");
+    }
+
+    @Override
+    public void inativar(Long id) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'inativar'");
     }
 }

@@ -1,12 +1,14 @@
-package com.deliverytech.delivery.model;
+package com.deliverytech.delivery.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
 
 @Entity
 @Data
+@Builder
 public class Produto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

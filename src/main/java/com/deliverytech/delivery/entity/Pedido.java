@@ -1,28 +1,20 @@
-package com.deliverytech.delivery.model;
+package com.deliverytech.delivery.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 //import com.deliverytech.delivery.enums.StatusPedido;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import java.util.List;
 
 @Entity
 @Data
+@Builder
 public class Pedido {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private LocalDateTime dataPedido;
-    private String enderecoEntrega;
-    private BigDecimal subtotal;
-    private BigDecimal taxaEntrega;
-    private BigDecimal valorTotal;
-
-    @Enumerated(EnumType.STRING)
-    private StatusPedido status;
 
     @ManyToOne
     @JoinColumn(name = "cliente_id")
@@ -32,8 +24,23 @@ public class Pedido {
     @JoinColumn(name = "restaurante_id")
     private Restaurante restaurante;
 
+    // Mudança 16/07
+    private BigDecimal valorTotal;
+    private String numeroPedido;
+    private BigDecimal subtotal;
+    private String observacoes;
+
+
+    @Enumerated(EnumType.STRING)
+    private StatusPedido status;
+
+    private LocalDateTime dataPedido = LocalDateTime.now();
+
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
     private List<ItemPedido> itens;
+
+    @Embedded
+    private Endereco enderecoEntrega;
 }
 
 

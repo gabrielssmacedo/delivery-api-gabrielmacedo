@@ -1,4 +1,4 @@
-package com.deliverytech.delivery.model;
+package com.deliverytech.delivery.entity;
 
 public enum Role {
     CLIENTE,

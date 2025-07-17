@@ -1,4 +1,4 @@
-package com.deliverytech.delivery.model;
+package com.deliverytech.delivery.entity;
 
 import jakarta.persistence.Embeddable;
 import lombok.*;
