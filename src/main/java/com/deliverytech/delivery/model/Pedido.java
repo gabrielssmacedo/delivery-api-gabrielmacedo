@@ -1,17 +1,22 @@
-package com.deliverytech.delivery.entity;
+package com.deliverytech.delivery.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 //import com.deliverytech.delivery.enums.StatusPedido;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
 @Entity
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Pedido {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

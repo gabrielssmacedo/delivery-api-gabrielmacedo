@@ -1,6 +1,6 @@
 package com.deliverytech.delivery.config;
 
-import com.deliverytech.delivery.entity.*;
+import com.deliverytech.delivery.model.*;
 import com.deliverytech.delivery.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;

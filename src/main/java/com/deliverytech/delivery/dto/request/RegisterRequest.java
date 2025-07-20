@@ -1,6 +1,6 @@
 package com.deliverytech.delivery.dto.request;
 
-import com.deliverytech.delivery.entity.Role;
+import com.deliverytech.delivery.model.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;

@@ -1,21 +1,21 @@
 package com.deliverytech.delivery.service.impl;
 
-import com.deliverytech.delivery.entity.Pedido;
-import com.deliverytech.delivery.entity.StatusPedido;
-import com.deliverytech.delivery.entity.ItemPedido;
-import com.deliverytech.delivery.entity.Produto;
+import com.deliverytech.delivery.model.*;
 import com.deliverytech.delivery.repository.PedidoRepository;
 import com.deliverytech.delivery.repository.ProdutoRepository;
 import com.deliverytech.delivery.service.PedidoService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j; // ✅ ADICIONAR
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList; // ✅ ADICIONAR
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j // ✅ ADICIONAR
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -26,114 +26,66 @@ public class PedidoServiceImpl implements PedidoService {
 
     @Override
     public Pedido criar(Pedido pedido) {
-        // ✅ CORRIGIDO: Usar status do gabarito
-        pedido.setStatus(StatusPedido.PENDENTE);  // ← Era CRIADO, agora PENDENTE
+        // ✅ SIMPLIFICAR: Definir dados básicos do pedido
+        pedido.setStatus(StatusPedido.CRIADO); // ✅ USAR CRIADO ao invés de PENDENTE
         pedido.setDataPedido(LocalDateTime.now());
+        pedido.setValorTotal(BigDecimal.ZERO); // ✅ Iniciar com valor zero
 
-        // ✅ ADICIONADO: Calcular valor total
-        BigDecimal valorTotal = calcularTotal(pedido);
-        pedido.setValorTotal(valorTotal);
+        // ✅ SALVAR e retornar o pedido
+        Pedido pedidoSalvo = pedidoRepository.save(pedido);
+        log.info("Pedido criado com sucesso - ID: {}", pedidoSalvo.getId());
 
-        return pedidoRepository.save(pedido);
+        return pedidoSalvo;
     }
 
+    // ✅ IMPLEMENTAR métodos básicos se não existirem
     @Override
+    @Transactional(readOnly = true)
     public Optional<Pedido> buscarPorId(Long id) {
         return pedidoRepository.findById(id);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Pedido> buscarPorCliente(Long clienteId) {
-        // ✅ CORRIGIDO: Removida duplicação, mantido apenas este método
         return pedidoRepository.findByClienteId(clienteId);
     }
 
     @Override
-    public List<Pedido> buscarPorRestaurante(Long restauranteId) {
-        return pedidoRepository.findByRestauranteId(restauranteId);
+    @Transactional(readOnly = true)
+    public Optional<Pedido> buscarPorIdComItens(Long id) {
+        return pedidoRepository.findByIdWithItens(id);
     }
 
     @Override
-    public List<Pedido> buscarPorStatus(StatusPedido status) {
-        // ✅ ADICIONADO: Método obrigatório
-        return pedidoRepository.findByStatus(status);
-    }
-
-    @Override
-    public List<Pedido> buscarPorPeriodo(LocalDateTime inicio, LocalDateTime fim) {
-        // ✅ ADICIONADO: Método obrigatório
-        return pedidoRepository.findByDataPedidoBetween(inicio, fim);
-    }
-
-    @Override
-    public Pedido atualizarStatus(Long id, StatusPedido status) {
-        return pedidoRepository.findById(id)
-                .map(pedido -> {
-                    // ✅ ADICIONADO: Validação de transição de status
-                    validarTransicaoStatus(pedido.getStatus(), status);
-                    pedido.setStatus(status);
-                    return pedidoRepository.save(pedido);
-                })
-                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
-    }
-
-    @Override
-    public Pedido confirmar(Long id) {
-        // ✅ ADICIONADO: Método obrigatório para endpoint PUT /pedidos/{id}/confirmar
-        return pedidoRepository.findById(id)
-                .map(pedido -> {
-                    if (pedido.getStatus() != StatusPedido.PENDENTE) {
-                        throw new RuntimeException("Apenas pedidos PENDENTES podem ser confirmados");
-                    }
-                    pedido.setStatus(StatusPedido.CONFIRMADO);
-                    return pedidoRepository.save(pedido);
-                })
-                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
-    }
-
-    @Override
-    public void cancelar(Long id) {
-        pedidoRepository.findById(id).ifPresentOrElse(pedido -> {
-            // ✅ MELHORADO: Validação antes de cancelar
-            if (pedido.getStatus() == StatusPedido.ENTREGUE) {
-                throw new RuntimeException("Não é possível cancelar pedido já entregue");
-            }
-            pedido.setStatus(StatusPedido.CANCELADO);
-            pedidoRepository.save(pedido);
-        }, () -> {
-            throw new RuntimeException("Pedido não encontrado");
-        });
+    @Transactional(readOnly = true)
+    public List<Pedido> buscarPorClienteComItens(Long clienteId) {
+        return pedidoRepository.findByClienteIdWithItens(clienteId);
     }
 
     @Override
     public Pedido adicionarItem(Long pedidoId, Long produtoId, Integer quantidade) {
-        // ✅ ADICIONADO: Método obrigatório para POST /pedidos/{id}/itens
         Pedido pedido = pedidoRepository.findById(pedidoId)
                 .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
-
-        if (pedido.getStatus() != StatusPedido.PENDENTE) {
-            throw new RuntimeException("Só é possível adicionar itens em pedidos PENDENTES");
-        }
 
         Produto produto = produtoRepository.findById(produtoId)
                 .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
 
-        if (!produto.isDisponivel()) {
-            throw new RuntimeException("Produto não está disponível");
-        }
-
-        // Criar novo item do pedido
+        // ✅ CRIAR item do pedido
         ItemPedido item = ItemPedido.builder()
                 .pedido(pedido)
                 .produto(produto)
                 .quantidade(quantidade)
                 .precoUnitario(produto.getPreco())
-                .subtotal(produto.getPreco().multiply(BigDecimal.valueOf(quantidade)))
                 .build();
 
+        // ✅ ADICIONAR item à lista
+        if (pedido.getItens() == null) {
+            pedido.setItens(new ArrayList<>());
+        }
         pedido.getItens().add(item);
 
-        // Recalcular valor total
+        // ✅ RECALCULAR valor total
         BigDecimal novoTotal = calcularTotal(pedido);
         pedido.setValorTotal(novoTotal);
 
@@ -141,8 +93,25 @@ public class PedidoServiceImpl implements PedidoService {
     }
 
     @Override
+    public Pedido confirmar(Long pedidoId) {
+        Pedido pedido = pedidoRepository.findById(pedidoId)
+                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+
+        pedido.setStatus(StatusPedido.CONFIRMADO);
+        return pedidoRepository.save(pedido);
+    }
+
+    @Override
+    public Pedido atualizarStatus(Long pedidoId, StatusPedido novoStatus) {
+        Pedido pedido = pedidoRepository.findById(pedidoId)
+                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+
+        pedido.setStatus(novoStatus);
+        return pedidoRepository.save(pedido);
+    }
+
+    // ✅ IMPLEMENTAR método calcularTotal
     public BigDecimal calcularTotal(Pedido pedido) {
-        // ✅ ADICIONADO: Método obrigatório para cálculo de valores
         if (pedido.getItens() == null || pedido.getItens().isEmpty()) {
             return BigDecimal.ZERO;
         }
@@ -152,37 +121,51 @@ public class PedidoServiceImpl implements PedidoService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    // ✅ ADICIONADO: Método auxiliar para validações
-    private void validarTransicaoStatus(StatusPedido statusAtual, StatusPedido novoStatus) {
-        // Regras de negócio para transição de status
-        switch (statusAtual) {
-            case PENDENTE:
-                if (novoStatus != StatusPedido.CONFIRMADO && novoStatus != StatusPedido.CANCELADO) {
-                    throw new RuntimeException("Status inválido para pedido PENDENTE");
-                }
-                break;
-            case CONFIRMADO:
-                if (novoStatus != StatusPedido.PREPARANDO && novoStatus != StatusPedido.CANCELADO) {
-                    throw new RuntimeException("Status inválido para pedido CONFIRMADO");
-                }
-                break;
-            case PREPARANDO:
-                if (novoStatus != StatusPedido.SAIU_PARA_ENTREGA && novoStatus != StatusPedido.CANCELADO) {
-                    throw new RuntimeException("Status inválido para pedido PREPARANDO");
-                }
-                break;
-            case SAIU_PARA_ENTREGA:
-                if (novoStatus != StatusPedido.ENTREGUE) {
-                    throw new RuntimeException("Status inválido para pedido SAIU_PARA_ENTREGA");
-                }
-                break;
-            case ENTREGUE:
-            case CANCELADO:
-                throw new RuntimeException("Não é possível alterar status de pedido " + statusAtual);
-            case CRIADO:
-                break;
-            default:
-                break;
+    // ✅ ADICIONAR: Método faltante para buscar pedidos por restaurante
+    @Override
+    @Transactional(readOnly = true)
+    public List<Pedido> buscarPorRestaurante(Long restauranteId) {
+        return pedidoRepository.findByRestauranteId(restauranteId);
+    }
+
+    // ✅ ADICIONAR: Método para cancelar pedido
+    @Override
+    public Pedido cancelar(Long pedidoId) {
+        Pedido pedido = pedidoRepository.findById(pedidoId)
+                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+
+        // Verificar se pode cancelar
+        if (pedido.getStatus() == StatusPedido.ENTREGUE) {
+            throw new RuntimeException("Não é possível cancelar um pedido já entregue");
         }
+        if (pedido.getStatus() == StatusPedido.CANCELADO) {
+            throw new RuntimeException("Pedido já está cancelado");
+        }
+
+        pedido.setStatus(StatusPedido.CANCELADO);
+        Pedido pedidoCancelado = pedidoRepository.save(pedido);
+        log.info("Pedido cancelado - ID: {}", pedidoId);
+
+        return pedidoCancelado; // ✅ RETORNAR o pedido cancelado
+    }
+
+    // ✅ ADICIONAR: Método para buscar por status
+    @Override
+    @Transactional(readOnly = true)
+    public List<Pedido> buscarPorStatus(StatusPedido status) {
+        return pedidoRepository.findByStatus(status);
+    }
+
+    // ✅ ADICIONAR: Método para buscar por período
+    @Override
+    @Transactional(readOnly = true)
+    public List<Pedido> buscarPorPeriodo(LocalDateTime inicio, LocalDateTime fim) {
+        return pedidoRepository.findByDataPedidoBetween(inicio, fim);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Pedido> listarTodos() {
+        return pedidoRepository.findAll();
     }
 }

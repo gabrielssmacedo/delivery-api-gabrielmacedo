@@ -1,12 +1,9 @@
-package com.deliverytech.delivery.entity;
+package com.deliverytech.delivery.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
 import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.util.List;
 
 @Entity
@@ -25,7 +22,7 @@ public class Restaurante {
 
     private String telefone;
 
-    private String endereco;
+    //mudança 16/07/ Remover exceção do setter
     private BigDecimal avaliacao;
 
     private BigDecimal taxaEntrega;
@@ -37,12 +34,9 @@ public class Restaurante {
     @OneToMany(mappedBy = "restaurante", cascade = CascadeType.ALL)
     private List<Produto> produtos;
 
+    // Mudança 16/07
     @OneToMany(mappedBy = "restaurante")
     private List<Pedido> pedidos;
 
-    public void setEndereco(String string) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setEndereco'");
-    }
 }
  

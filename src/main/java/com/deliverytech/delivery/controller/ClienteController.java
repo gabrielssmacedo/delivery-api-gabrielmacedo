@@ -1,6 +1,7 @@
 package com.deliverytech.delivery.controller;
 
-import com.deliverytech.delivery.entity.Cliente;
+import com.deliverytech.delivery.dto.request.ClienteRequest;
+import com.deliverytech.delivery.model.Cliente;
 import com.deliverytech.delivery.service.ClienteService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,7 @@ public class ClienteController {
     private final ClienteService clienteService;
 
     @PostMapping
-    public ResponseEntity<?> cadastrar(@Valid @RequestBody Cliente cliente) {
+    public ResponseEntity<?> cadastrar(@Valid @RequestBody ClienteRequest cliente) {
         try {
             log.info("Recebida requisição para cadastrar cliente: {}", cliente.getEmail());
             Cliente clienteSalvo = clienteService.cadastrar(cliente);

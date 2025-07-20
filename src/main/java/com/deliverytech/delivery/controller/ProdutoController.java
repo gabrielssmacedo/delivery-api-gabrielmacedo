@@ -2,8 +2,8 @@ package com.deliverytech.delivery.controller;
 
 import com.deliverytech.delivery.dto.request.ProdutoRequest;
 import com.deliverytech.delivery.dto.response.ProdutoResponse;
-import com.deliverytech.delivery.entity.Produto;
-import com.deliverytech.delivery.entity.Restaurante;
+import com.deliverytech.delivery.model.Produto;
+import com.deliverytech.delivery.model.Restaurante;
 import com.deliverytech.delivery.service.ProdutoService;
 import com.deliverytech.delivery.service.RestauranteService;
 import lombok.RequiredArgsConstructor;
@@ -65,4 +65,36 @@ public class ProdutoController {
         produtoService.alterarDisponibilidade(id, disponivel);
         return ResponseEntity.noContent().build();
     }
+
+    // ADICIONAR: Listar todos os produtos
+    @GetMapping
+    public List<ProdutoResponse> listarTodos() {
+        return produtoService.listarTodos().stream()
+                .map(p -> new ProdutoResponse(p.getId(), p.getNome(), p.getCategoria(),
+                        p.getDescricao(), p.getPreco(), p.isDisponivel()))
+                .collect(Collectors.toList());
+    }
+
+    // ADICIONAR: Buscar produto por ID
+    @GetMapping("/{id}")
+    public ResponseEntity<ProdutoResponse> buscarPorId(@PathVariable Long id) {
+        return produtoService.buscarPorId(id)
+                .map(p -> new ProdutoResponse(p.getId(), p.getNome(), p.getCategoria(),
+                        p.getDescricao(), p.getPreco(), p.isDisponivel()))
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+        produtoService.deletar(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}/inativar")
+    public ResponseEntity<Void> inativar(@PathVariable Long id) {
+        produtoService.inativar(id);
+        return ResponseEntity.noContent().build();
+    }
 }
+

@@ -12,7 +12,13 @@ public class ClienteRequest {
     @NotBlank
     private String nome;
 
+    @NotBlank
+    private String telefone;
+
     @Email
     @NotBlank
     private String email;
+
+    @NotBlank
+    private String endereco;
 }

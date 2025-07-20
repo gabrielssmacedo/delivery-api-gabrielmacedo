@@ -17,12 +17,16 @@ public class RestauranteRequest {
     private String categoria;
 
     @NotBlank
-    private String telefone;
+    private String endereco;
 
+    @NotNull
     @DecimalMin("0.0")
     private BigDecimal taxaEntrega;
 
-    @Min(10)
-    @Max(120)
+    @NotNull
+    @Min(1)
     private Integer tempoEntregaMinutos;
+
+    private String telefone;
+    private String email;
 }

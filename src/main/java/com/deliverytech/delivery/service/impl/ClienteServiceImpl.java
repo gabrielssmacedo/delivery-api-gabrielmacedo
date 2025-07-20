@@ -1,6 +1,7 @@
 package com.deliverytech.delivery.service.impl;
 
-import com.deliverytech.delivery.entity.Cliente;
+import com.deliverytech.delivery.model.Cliente;
+import com.deliverytech.delivery.dto.request.ClienteRequest; // ADICIONAR IMPORT
 import com.deliverytech.delivery.repository.ClienteRepository;
 import com.deliverytech.delivery.service.ClienteService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,36 @@ public class ClienteServiceImpl implements ClienteService {
      * Cadastrar novo cliente com validações completas
      */
     @Override
+    public Cliente cadastrar(ClienteRequest clienteRequest) {
+        log.info("Iniciando cadastro de cliente: {}", clienteRequest.getEmail());
+
+        // Converter ClienteRequest para Cliente
+        Cliente cliente = new Cliente();
+        cliente.setNome(clienteRequest.getNome());
+        cliente.setEmail(clienteRequest.getEmail());
+        cliente.setTelefone(clienteRequest.getTelefone());
+        cliente.setEndereco(clienteRequest.getEndereco()); // <-----
+
+        // Validar email único
+        if (clienteRepository.existsByEmail(cliente.getEmail())) {
+            throw new IllegalArgumentException("Email já cadastrado: " + cliente.getEmail());
+        }
+
+        // Validações de negócio
+        validarDadosCliente(cliente);
+
+        // Definir como ativo por padrão
+        cliente.setAtivo(true);
+
+        Cliente clienteSalvo = clienteRepository.save(cliente);
+        log.info("Cliente cadastrado com sucesso - ID: {}", clienteSalvo.getId());
+
+        return clienteSalvo;
+    }
+
+    /**
+     * Método auxiliar para cadastrar cliente a partir de uma entidade Cliente.
+     */
     public Cliente cadastrar(Cliente cliente) {
         log.info("Iniciando cadastro de cliente: {}", cliente.getEmail());
 

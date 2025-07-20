@@ -1,7 +1,7 @@
 package com.deliverytech.delivery.dto.response;
 
-import com.deliverytech.delivery.entity.StatusPedido;
-import com.deliverytech.delivery.entity.Endereco;
+import com.deliverytech.delivery.model.StatusPedido;
+import com.deliverytech.delivery.model.Endereco;
 import lombok.*;
 
 import java.math.BigDecimal;

@@ -1,9 +1,10 @@
 package com.deliverytech.delivery.service.impl;
 
-import com.deliverytech.delivery.entity.Produto;
+import com.deliverytech.delivery.model.Produto;
 import com.deliverytech.delivery.repository.ProdutoRepository;
 import com.deliverytech.delivery.service.ProdutoService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j; //ADICIONAR ESTE IMPORT
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,6 +12,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j // ADICIONAR ESTA ANOTAÇÃO
 @Service
 @RequiredArgsConstructor
 @Transactional  // ADICIONADO: Para operações de escrita
@@ -45,7 +47,7 @@ public class ProdutoServiceImpl implements ProdutoService {
     public Produto atualizar(Long id, Produto atualizado) {
         return produtoRepository.findById(id)
                 .map(produto -> {
-                    // ✅ MELHORADO: Validar preço se foi alterado
+                    // MELHORADO: Validar preço se foi alterado
                     if (atualizado.getPreco() != null) {
                         validarPreco(atualizado.getPreco());
                         produto.setPreco(atualizado.getPreco());
@@ -67,14 +69,27 @@ public class ProdutoServiceImpl implements ProdutoService {
     }
 
     @Override
+    public void deletar(Long id) {
+        if (!produtoRepository.existsById(id)) {
+            throw new RuntimeException("Produto não encontrado - ID: " + id);
+        }
+        produtoRepository.deleteById(id);
+        log.info("Produto deletado - ID: {}", id); //Agora funciona
+    }
+
+    @Override
     public void inativar(Long id) {
         produtoRepository.findById(id)
-                .ifPresentOrElse(produto -> {
-                    produto.setDisponivel(false);
-                    produtoRepository.save(produto);
-                }, () -> {
-                    throw new RuntimeException("Produto não encontrado");
-                });
+                .ifPresentOrElse(
+                        produto -> {
+                            produto.setDisponivel(false);
+                            produtoRepository.save(produto);
+                            log.info("Produto inativado - ID: {}", id); // ✅ Agora funciona
+                        },
+                        () -> {
+                            throw new RuntimeException("Produto não encontrado - ID: " + id);
+                        }
+                );
     }
 
     @Override

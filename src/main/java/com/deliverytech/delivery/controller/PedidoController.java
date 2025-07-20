@@ -3,7 +3,7 @@ package com.deliverytech.delivery.controller;
 import com.deliverytech.delivery.dto.request.PedidoRequest;
 import com.deliverytech.delivery.dto.response.ItemPedidoResponse;
 import com.deliverytech.delivery.dto.response.PedidoResponse;
-import com.deliverytech.delivery.entity.*;
+import com.deliverytech.delivery.model.*;
 import com.deliverytech.delivery.service.ClienteService;
 import com.deliverytech.delivery.service.PedidoService;
 import com.deliverytech.delivery.service.ProdutoService;
@@ -11,6 +11,7 @@ import com.deliverytech.delivery.service.RestauranteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.validation.Valid;
 import java.math.BigDecimal;
@@ -27,6 +28,7 @@ public class PedidoController {
     private final RestauranteService restauranteService;
     private final ProdutoService produtoService;
 
+    // 1. CRIAR PEDIDO (Simplificado - sem itens iniciais)
     @PostMapping
     public ResponseEntity<PedidoResponse> criar(@Valid @RequestBody PedidoRequest request) {
         Cliente cliente = clienteService.buscarPorId(request.getClienteId())
@@ -34,33 +36,15 @@ public class PedidoController {
         Restaurante restaurante = restauranteService.buscarPorId(request.getRestauranteId())
                 .orElseThrow(() -> new RuntimeException("Restaurante não encontrado"));
 
-        List<ItemPedido> itens = request.getItens().stream().map(item -> {
-            Produto produto = produtoService.buscarPorId(item.getProdutoId())
-                    .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
-            return ItemPedido.builder()
-                    .produto(produto)
-                    .quantidade(item.getQuantidade())
-                    .precoUnitario(produto.getPreco())
-                    .build();
-        }).collect(Collectors.toList());
-
-        BigDecimal total = itens.stream()
-                .map(i -> i.getPrecoUnitario().multiply(BigDecimal.valueOf(i.getQuantidade())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
         Pedido pedido = Pedido.builder()
                 .cliente(cliente)
                 .restaurante(restaurante)
                 .status(StatusPedido.CRIADO)
-                .valorTotal(total)
+                .valorTotal(BigDecimal.ZERO) // Inicia com valor zero
                 .enderecoEntrega(request.getEnderecoEntrega())
-                .itens(itens)
                 .build();
 
         Pedido salvo = pedidoService.criar(pedido);
-        List<ItemPedidoResponse> itensResp = salvo.getItens().stream()
-                .map(i -> new ItemPedidoResponse(i.getProduto().getId(), i.getProduto().getNome(), i.getQuantidade(), i.getPrecoUnitario()))
-                .collect(Collectors.toList());
 
         return ResponseEntity.ok(new PedidoResponse(
                 salvo.getId(),
@@ -70,18 +54,21 @@ public class PedidoController {
                 salvo.getValorTotal(),
                 salvo.getStatus(),
                 salvo.getDataPedido(),
-                itensResp
+                List.of() // Lista vazia de itens inicialmente
         ));
     }
 
+    // 2. BUSCAR PEDIDO POR ID
+    @Transactional(readOnly = true) // ✅ ADICIONAR
     @GetMapping("/{id}")
     public ResponseEntity<PedidoResponse> buscarPorId(@PathVariable Long id) {
         Pedido pedido = pedidoService.buscarPorId(id)
                 .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
 
-        List<ItemPedidoResponse> itensResp = pedido.getItens().stream()
-                .map(i -> new ItemPedidoResponse(i.getProduto().getId(), i.getProduto().getNome(), i.getQuantidade(), i.getPrecoUnitario()))
-                .collect(Collectors.toList());
+        List<ItemPedidoResponse> itensResp = pedido.getItens() != null ?
+                pedido.getItens().stream()
+                        .map(i -> new ItemPedidoResponse(i.getProduto().getId(), i.getProduto().getNome(), i.getQuantidade(), i.getPrecoUnitario()))
+                        .collect(Collectors.toList()) : List.of();
 
         return ResponseEntity.ok(new PedidoResponse(
                 pedido.getId(),
@@ -95,6 +82,8 @@ public class PedidoController {
         ));
     }
 
+    // 3. BUSCAR PEDIDOS POR CLIENTE
+    @Transactional(readOnly = true) // ✅ ADICIONAR
     @GetMapping("/cliente/{clienteId}")
     public ResponseEntity<List<PedidoResponse>> buscarPorCliente(@PathVariable Long clienteId) {
         List<Pedido> pedidos = pedidoService.buscarPorCliente(clienteId);
@@ -107,33 +96,148 @@ public class PedidoController {
                         pedido.getValorTotal(),
                         pedido.getStatus(),
                         pedido.getDataPedido(),
-                        pedido.getItens().stream()
+                        pedido.getItens() != null ? pedido.getItens().stream()
                                 .map(i -> new ItemPedidoResponse(i.getProduto().getId(), i.getProduto().getNome(), i.getQuantidade(), i.getPrecoUnitario()))
-                                .collect(Collectors.toList())
+                                .collect(Collectors.toList()) : List.of()
                 ))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(pedidosResp);
     }
 
+    //  4. ADICIONAR ITEM AO PEDIDO (IMPLEMENTAR)
+    @Transactional
     @PostMapping("/{pedidoId}/itens")
-    public ResponseEntity<?> adicionarItem(@PathVariable Long pedidoId,
-                                           @RequestParam Long produtoId,
-                                           @RequestParam Integer quantidade) {
-        // Lógica para adicionar item ao pedido
-        return ResponseEntity.ok().build();
+    public ResponseEntity<PedidoResponse> adicionarItem(@PathVariable Long pedidoId,
+                                                        @RequestParam Long produtoId,
+                                                        @RequestParam Integer quantidade) {
+        Pedido pedido = pedidoService.buscarPorId(pedidoId)
+                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+
+        if (pedido.getStatus() != StatusPedido.CRIADO) {
+            throw new RuntimeException("Não é possível adicionar itens a um pedido confirmado");
+        }
+
+        Produto produto = produtoService.buscarPorId(produtoId)
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+
+        Pedido pedidoAtualizado = pedidoService.adicionarItem(pedidoId, produtoId, quantidade);
+
+        List<ItemPedidoResponse> itensResp = pedidoAtualizado.getItens().stream()
+                .map(i -> new ItemPedidoResponse(i.getProduto().getId(), i.getProduto().getNome(), i.getQuantidade(), i.getPrecoUnitario()))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(new PedidoResponse(
+                pedidoAtualizado.getId(),
+                pedidoAtualizado.getCliente().getId(),
+                pedidoAtualizado.getRestaurante().getId(),
+                pedidoAtualizado.getEnderecoEntrega(),
+                pedidoAtualizado.getValorTotal(),
+                pedidoAtualizado.getStatus(),
+                pedidoAtualizado.getDataPedido(),
+                itensResp
+        ));
     }
 
+    // 5. CONFIRMAR PEDIDO (IMPLEMENTAR)
+    @Transactional
     @PutMapping("/{id}/confirmar")
-    public ResponseEntity<?> confirmar(@PathVariable Long id) {
-        // Lógica para confirmar o pedido
-        return ResponseEntity.ok().build();
+    public ResponseEntity<PedidoResponse> confirmar(@PathVariable Long id) {
+        Pedido pedido = pedidoService.buscarPorId(id)
+                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+
+        if (pedido.getStatus() != StatusPedido.CRIADO) {
+            throw new RuntimeException("Pedido já foi confirmado ou cancelado");
+        }
+
+        if (pedido.getItens() == null || pedido.getItens().isEmpty()) {
+            throw new RuntimeException("Não é possível confirmar um pedido sem itens");
+        }
+
+        Pedido pedidoConfirmado = pedidoService.confirmar(id);
+
+        List<ItemPedidoResponse> itensResp = pedidoConfirmado.getItens().stream()
+                .map(i -> new ItemPedidoResponse(i.getProduto().getId(), i.getProduto().getNome(), i.getQuantidade(), i.getPrecoUnitario()))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(new PedidoResponse(
+                pedidoConfirmado.getId(),
+                pedidoConfirmado.getCliente().getId(),
+                pedidoConfirmado.getRestaurante().getId(),
+                pedidoConfirmado.getEnderecoEntrega(),
+                pedidoConfirmado.getValorTotal(),
+                pedidoConfirmado.getStatus(),
+                pedidoConfirmado.getDataPedido(),
+                itensResp
+        ));
     }
 
+    // 6. ATUALIZAR STATUS DO PEDIDO (IMPLEMENTAR)
+    @Transactional
     @PutMapping("/{id}/status")
-    public ResponseEntity<?> atualizarStatus(@PathVariable Long id,
-                                             @RequestParam StatusPedido status) {
-        // Lógica para atualizar o status do pedido
-        return ResponseEntity.ok().build();
+    public ResponseEntity<PedidoResponse> atualizarStatus(@PathVariable Long id,
+                                                          @RequestParam StatusPedido status) {
+        Pedido pedido = pedidoService.buscarPorId(id)
+                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+
+        Pedido pedidoAtualizado = pedidoService.atualizarStatus(id, status);
+
+        List<ItemPedidoResponse> itensResp = pedidoAtualizado.getItens() != null ?
+                pedidoAtualizado.getItens().stream()
+                        .map(i -> new ItemPedidoResponse(i.getProduto().getId(), i.getProduto().getNome(), i.getQuantidade(), i.getPrecoUnitario()))
+                        .collect(Collectors.toList()) : List.of();
+
+        return ResponseEntity.ok(new PedidoResponse(
+                pedidoAtualizado.getId(),
+                pedidoAtualizado.getCliente().getId(),
+                pedidoAtualizado.getRestaurante().getId(),
+                pedidoAtualizado.getEnderecoEntrega(),
+                pedidoAtualizado.getValorTotal(),
+                pedidoAtualizado.getStatus(),
+                pedidoAtualizado.getDataPedido(),
+                itensResp
+        ));
+    }
+
+    // 7. CANCELAR PEDIDO (NOVO)
+    @Transactional
+    @DeleteMapping("/{id}/cancelar")
+    public ResponseEntity<PedidoResponse> cancelar(@PathVariable Long id) {
+        Pedido pedidoCancelado = pedidoService.cancelar(id);
+
+        // Retornar o pedido cancelado como resposta
+        return ResponseEntity.ok(new PedidoResponse(
+                pedidoCancelado.getId(),
+                pedidoCancelado.getCliente().getId(),
+                pedidoCancelado.getRestaurante().getId(),
+                pedidoCancelado.getEnderecoEntrega(),
+                pedidoCancelado.getValorTotal(),
+                pedidoCancelado.getStatus(), // ✅ Agora será CANCELADO
+                pedidoCancelado.getDataPedido(),
+                List.of() // ou mapear os itens se necessário
+        ));
+    }
+
+    // ✅ ADICIONAR: Endpoint para listar todos os pedidos
+    @GetMapping
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<PedidoResponse>> listarTodos() {
+        List<Pedido> pedidos = pedidoService.listarTodos();
+        List<PedidoResponse> pedidosResp = pedidos.stream()
+                .map(pedido -> new PedidoResponse(
+                        pedido.getId(),
+                        pedido.getCliente().getId(),
+                        pedido.getRestaurante().getId(),
+                        pedido.getEnderecoEntrega(),
+                        pedido.getValorTotal(),
+                        pedido.getStatus(),
+                        pedido.getDataPedido(),
+                        pedido.getItens() != null ? pedido.getItens().stream()
+                                .map(i -> new ItemPedidoResponse(i.getProduto().getId(), i.getProduto().getNome(), i.getQuantidade(), i.getPrecoUnitario()))
+                                .collect(Collectors.toList()) : List.of()
+                ))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(pedidosResp);
     }
 }

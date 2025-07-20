@@ -1,6 +1,6 @@
 package com.deliverytech.delivery.dto.request;
 
-import com.deliverytech.delivery.entity.Endereco;
+import com.deliverytech.delivery.model.Endereco;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
