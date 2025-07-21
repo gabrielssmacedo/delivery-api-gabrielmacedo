@@ -183,6 +183,26 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     /**
+     * Ativar/Desativar cliente (toggle status ativo)
+     * NOVO MÉTODO para atender requisito da atividade
+     */
+    @Override
+    public Cliente ativarDesativarCliente(Long id) {
+        log.info("Alterando status do cliente ID: {}", id);
+
+        Cliente cliente = buscarPorId(id)
+                .orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado: " + id));
+
+        // Toggle do status
+        cliente.setAtivo(!cliente.getAtivo());
+
+        Cliente clienteSalvo = clienteRepository.save(cliente);
+        log.info("Status do cliente alterado para: {} - ID: {}", clienteSalvo.getAtivo(), id);
+
+        return clienteSalvo;
+    }
+
+    /**
      * VALIDAÇÕES DE NEGÓCIO COMPLETAS (método privado)
      */
     private void validarDadosCliente(Cliente cliente) {

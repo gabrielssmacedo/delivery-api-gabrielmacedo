@@ -1,7 +1,8 @@
 package com.deliverytech.delivery.model;
 
-import jakarta.persistence.Embeddable;
+import jakarta.persistence.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Embeddable
 @Data
@@ -10,10 +11,25 @@ import lombok.*;
 @Builder
 public class Endereco {
 
+    @JsonProperty("rua")
+    @Column(name = "logradouro")
     private String rua;
+
+    @Column(name = "numero")
     private String numero;
+
+    @Column(name = "bairro")
     private String bairro;
+
+    @Column(name = "cidade")
     private String cidade;
+
+    @Column(name = "estado")
     private String estado;
+
+    @Column(name = "cep")
     private String cep;
+
+    @Column(name = "complemento")
+    private String complemento;
 }

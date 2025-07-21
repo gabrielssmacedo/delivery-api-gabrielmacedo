@@ -1,8 +1,8 @@
 package com.deliverytech.delivery.controller;
 
-import com.deliverytech.delivery.dto.request.ClienteRequest;
 import com.deliverytech.delivery.model.Cliente;
-import com.deliverytech.delivery.service.ClienteService;
+import com.deliverytech.delivery.dto.request.ClienteRequest; // ✅ ADICIONAR IMPORT
+import com.deliverytech.delivery.service.ClienteService; // ✅ INTERFACE
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -15,18 +15,22 @@ import java.util.Optional;
 
 @Slf4j
 @RestController
-@RequestMapping("/clientes")
+@RequestMapping("/api/clientes")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class ClienteController {
 
-    private final ClienteService clienteService;
+    private final ClienteService clienteService; // ✅ INJEÇÃO DA INTERFACE
 
+    /**
+     * Cadastrar novo cliente
+     * POST /clientes
+     */
     @PostMapping
-    public ResponseEntity<?> cadastrar(@Valid @RequestBody ClienteRequest cliente) {
+    public ResponseEntity<?> cadastrar(@Valid @RequestBody ClienteRequest clienteRequest) {
         try {
-            log.info("Recebida requisição para cadastrar cliente: {}", cliente.getEmail());
-            Cliente clienteSalvo = clienteService.cadastrar(cliente);
+            log.info("Recebida requisição para cadastrar cliente: {}", clienteRequest.getEmail());
+            Cliente clienteSalvo = clienteService.cadastrar(clienteRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(clienteSalvo);
         } catch (IllegalArgumentException e) {
             log.warn("Erro de validação ao cadastrar cliente: {}", e.getMessage());
@@ -38,6 +42,10 @@ public class ClienteController {
         }
     }
 
+    /**
+     * Listar todos os clientes ativos
+     * GET /clientes
+     */
     @GetMapping
     public ResponseEntity<List<Cliente>> listar() {
         log.info("Recebida requisição para listar clientes ativos");
@@ -45,7 +53,10 @@ public class ClienteController {
         return ResponseEntity.ok(clientes);
     }
 
-
+    /**
+     * Buscar cliente por ID
+     * GET /clientes/{id}
+     */
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
         log.info("Recebida requisição para buscar cliente ID: {}", id);
@@ -58,7 +69,10 @@ public class ClienteController {
         }
     }
 
-
+    /**
+     * Buscar cliente por email
+     * GET /clientes/email/{email}
+     */
     @GetMapping("/email/{email}")
     public ResponseEntity<?> buscarPorEmail(@PathVariable String email) {
         log.info("Recebida requisição para buscar cliente por email: {}", email);
@@ -71,7 +85,10 @@ public class ClienteController {
         }
     }
 
-
+    /**
+     * Buscar clientes por nome
+     * GET /clientes/buscar?nome=João
+     */
     @GetMapping("/buscar")
     public ResponseEntity<List<Cliente>> buscarPorNome(@RequestParam String nome) {
         log.info("Recebida requisição para buscar clientes por nome: {}", nome);
@@ -79,7 +96,10 @@ public class ClienteController {
         return ResponseEntity.ok(clientes);
     }
 
-
+    /**
+     * Atualizar cliente
+     * PUT /clientes/{id}
+     */
     @PutMapping("/{id}")
     public ResponseEntity<?> atualizar(@PathVariable Long id,
                                        @Valid @RequestBody Cliente cliente) {
@@ -97,7 +117,10 @@ public class ClienteController {
         }
     }
 
-
+    /**
+     * Inativar cliente (soft delete)
+     * DELETE /clientes/{id}
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> inativar(@PathVariable Long id) {
         try {

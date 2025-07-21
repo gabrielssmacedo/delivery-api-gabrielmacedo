@@ -85,12 +85,14 @@ public class ProdutoController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // ✅ ADICIONAR: Endpoint para deletar produto
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         produtoService.deletar(id);
         return ResponseEntity.noContent().build();
     }
 
+    // ✅ ALTERNATIVA: Se quiser usar inativação (soft delete)
     @DeleteMapping("/{id}/inativar")
     public ResponseEntity<Void> inativar(@PathVariable Long id) {
         produtoService.inativar(id);
