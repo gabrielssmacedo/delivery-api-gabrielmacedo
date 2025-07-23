@@ -1,11 +1,7 @@
 package com.deliverytech.delivery.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
 import java.math.BigDecimal;
 
 @Entity
@@ -37,6 +33,7 @@ public class ItemPedido {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal subtotal;
 
+    // ✅ MÉTODO PARA CALCULAR SUBTOTAL AUTOMATICAMENTE
     @PrePersist
     @PreUpdate
     private void calcularSubtotal() {
@@ -45,10 +42,12 @@ public class ItemPedido {
         }
     }
 
+    // ✅ MÉTODO AUXILIAR PARA DEFINIR SUBTOTAL MANUALMENTE SE NECESSÁRIO
     public void setSubtotal() {
         calcularSubtotal();
     }
 
+    // ✅ MÉTODO AUXILIAR PARA OBTER VALOR TOTAL DO ITEM
     public BigDecimal getValorTotal() {
         return subtotal != null ? subtotal : BigDecimal.ZERO;
     }

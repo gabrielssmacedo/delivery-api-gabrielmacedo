@@ -37,14 +37,14 @@ public class ProdutoController {
                 .build();
 
         Produto salvo = produtoService.cadastrar(produto);
-        return ResponseEntity.ok(new ProdutoResponse(
-                salvo.getId(), salvo.getNome(), salvo.getCategoria(), salvo.getDescricao(), salvo.getPreco(), salvo.isDisponivel()));
+        return ResponseEntity.status(201).body((new ProdutoResponse(
+                salvo.getId(), salvo.getNome(), salvo.getCategoria(), salvo.getDescricao(), salvo.getPreco(), salvo.getDisponivel())));
     }
 
     @GetMapping("/restaurante/{restauranteId}")
     public List<ProdutoResponse> listarPorRestaurante(@PathVariable Long restauranteId) {
         return produtoService.buscarPorRestaurante(restauranteId).stream()
-                .map(p -> new ProdutoResponse(p.getId(), p.getNome(), p.getCategoria(), p.getDescricao(), p.getPreco(), p.isDisponivel()))
+                .map(p -> new ProdutoResponse(p.getId(), p.getNome(), p.getCategoria(), p.getDescricao(), p.getPreco(), p.getDisponivel()))
                 .collect(Collectors.toList());
     }
 
@@ -57,7 +57,7 @@ public class ProdutoController {
                 .preco(request.getPreco())
                 .build();
         Produto salvo = produtoService.atualizar(id, atualizado);
-        return ResponseEntity.ok(new ProdutoResponse(salvo.getId(), salvo.getNome(), salvo.getCategoria(), salvo.getDescricao(), salvo.getPreco(), salvo.isDisponivel()));
+        return ResponseEntity.ok(new ProdutoResponse(salvo.getId(), salvo.getNome(), salvo.getCategoria(), salvo.getDescricao(), salvo.getPreco(), salvo.getDisponivel()));
     }
 
     @PatchMapping("/{id}/disponibilidade")
@@ -71,7 +71,7 @@ public class ProdutoController {
     public List<ProdutoResponse> listarTodos() {
         return produtoService.listarTodos().stream()
                 .map(p -> new ProdutoResponse(p.getId(), p.getNome(), p.getCategoria(),
-                        p.getDescricao(), p.getPreco(), p.isDisponivel()))
+                        p.getDescricao(), p.getPreco(), p.getDisponivel()))
                 .collect(Collectors.toList());
     }
 
@@ -80,7 +80,7 @@ public class ProdutoController {
     public ResponseEntity<ProdutoResponse> buscarPorId(@PathVariable Long id) {
         return produtoService.buscarPorId(id)
                 .map(p -> new ProdutoResponse(p.getId(), p.getNome(), p.getCategoria(),
-                        p.getDescricao(), p.getPreco(), p.isDisponivel()))
+                        p.getDescricao(), p.getPreco(), p.getDisponivel()))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -97,6 +97,19 @@ public class ProdutoController {
     public ResponseEntity<Void> inativar(@PathVariable Long id) {
         produtoService.inativar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Buscar produtos por categoria
+     * GET /api/produtos/categoria/{categoria}
+     */
+    @GetMapping("/categoria/{categoria}")
+    public List<ProdutoResponse> buscarPorCategoria(@PathVariable String categoria) {
+        return produtoService.buscarPorCategoria(categoria).stream()
+                .map(p -> new ProdutoResponse(
+                        p.getId(), p.getNome(), p.getCategoria(),
+                        p.getDescricao(), p.getPreco(), p.getDisponivel()))
+                .collect(Collectors.toList());
     }
 }
 

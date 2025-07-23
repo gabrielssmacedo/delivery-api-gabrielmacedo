@@ -26,7 +26,7 @@ public class ProdutoServiceImpl implements ProdutoService {
         validarPreco(produto.getPreco());
 
         // MELHORADO: Definir disponível como true por padrão
-        if (!produto.isDisponivel()) {
+        if (!produto.getDisponivel()) {
             produto.setDisponivel(true);
         }
 

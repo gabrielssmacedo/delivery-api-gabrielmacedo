@@ -54,25 +54,6 @@ public class ClienteServiceImpl implements ClienteService {
     /**
      * Método auxiliar para cadastrar cliente a partir de uma entidade Cliente.
      */
-    public Cliente cadastrar(Cliente cliente) {
-        log.info("Iniciando cadastro de cliente: {}", cliente.getEmail());
-
-        // Validar email único
-        if (clienteRepository.existsByEmail(cliente.getEmail())) {
-            throw new IllegalArgumentException("Email já cadastrado: " + cliente.getEmail());
-        }
-
-        // Validações de negócio
-        validarDadosCliente(cliente);
-
-        // Definir como ativo por padrão
-        cliente.setAtivo(true);
-
-        Cliente clienteSalvo = clienteRepository.save(cliente);
-        log.info("Cliente cadastrado com sucesso - ID: {}", clienteSalvo.getId());
-
-        return clienteSalvo;
-    }
 
     /**
      * Buscar cliente por ID
@@ -118,37 +99,33 @@ public class ClienteServiceImpl implements ClienteService {
      * Atualizar dados do cliente COM TODAS AS VALIDAÇÕES
      */
     @Override
-    public Cliente atualizar(Long id, Cliente clienteAtualizado) {
+    public Cliente atualizar(Long id, ClienteRequest clienteRequest) { // CORRIGIR: Cliente → ClienteRequest
         log.info("Atualizando cliente ID: {}", id);
 
         Cliente cliente = buscarPorId(id)
                 .orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado: " + id));
 
         // Verificar se email não está sendo usado por outro cliente
-        if (!cliente.getEmail().equals(clienteAtualizado.getEmail()) &&
-                clienteRepository.existsByEmail(clienteAtualizado.getEmail())) {
-            throw new IllegalArgumentException("Email já cadastrado: " + clienteAtualizado.getEmail());
+        if (!cliente.getEmail().equals(clienteRequest.getEmail()) && // CORRIGIR: clienteAtualizado → clienteRequest
+                clienteRepository.existsByEmail(clienteRequest.getEmail())) { // CORRIGIR
+            throw new IllegalArgumentException("Email já cadastrado: " + clienteRequest.getEmail()); // CORRIGIR
         }
+
+        // Criar cliente temporário para validação
+        Cliente clienteParaValidacao = new Cliente();
+        clienteParaValidacao.setNome(clienteRequest.getNome());
+        clienteParaValidacao.setEmail(clienteRequest.getEmail());
+        clienteParaValidacao.setTelefone(clienteRequest.getTelefone());
+        clienteParaValidacao.setEndereco(clienteRequest.getEndereco());
 
         // Validar dados atualizados
-        validarDadosCliente(clienteAtualizado);
+        validarDadosCliente(clienteParaValidacao);
 
         // Atualizar campos
-        cliente.setNome(clienteAtualizado.getNome());
-        cliente.setEmail(clienteAtualizado.getEmail());
-
-        // Atualizar telefone e endereco (se implementados na entidade)
-        try {
-            cliente.setTelefone(clienteAtualizado.getTelefone());
-        } catch (UnsupportedOperationException e) {
-            log.warn("Campo telefone não implementado na entidade Cliente");
-        }
-
-        try {
-            cliente.setEndereco(clienteAtualizado.getEndereco());
-        } catch (UnsupportedOperationException e) {
-            log.warn("Campo endereco não implementado na entidade Cliente");
-        }
+        cliente.setNome(clienteRequest.getNome()); // CORRIGIR
+        cliente.setEmail(clienteRequest.getEmail()); // CORRIGIR
+        cliente.setTelefone(clienteRequest.getTelefone()); // CORRIGIR
+        cliente.setEndereco(clienteRequest.getEndereco()); // CORRIGIR
 
         Cliente clienteSalvo = clienteRepository.save(cliente);
         log.info("Cliente atualizado com sucesso - ID: {}", clienteSalvo.getId());

@@ -1,0 +1,25 @@
+=== ENTREGA - TESTE DE ENDPOINT ===
+Data/Hora: 22/07/2025 20:05:37
+Método: POST
+URL Completa: http://localhost:8080/api/produtos
+Status HTTP: 201
+Content-Type: application/json
+
+=== DADOS ENVIADOS ===
+{
+  "nome" : "Pizza Calabresa",
+  "descricao" : "",
+  "preco" : 45.5,
+  "categoria" : "Pizza",
+  "restauranteId" : 1
+}
+
+=== RESPOSTA REAL ===
+{
+  "id" : 1,
+  "nome" : "Pizza Calabresa",
+  "categoria" : "Pizza",
+  "descricao" : "",
+  "preco" : 45.5,
+  "disponivel" : true
+}

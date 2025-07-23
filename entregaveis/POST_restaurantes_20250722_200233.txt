@@ -1,0 +1,27 @@
+=== ENTREGA - TESTE DE ENDPOINT ===
+Data/Hora: 22/07/2025 20:02:33
+Método: POST
+URL Completa: http://localhost:8080/api/restaurantes
+Status HTTP: 201
+Content-Type: application/json
+
+=== DADOS ENVIADOS ===
+{
+  "nome" : "Prato ruim",
+  "categoria" : "Pizza",
+  "telefone" : "11777777777",
+  "endereco" : "Av. Machado de Diamante",
+  "taxaEntrega" : 4.9,
+  "tempoEntregaMinutos" : 35
+}
+
+=== RESPOSTA REAL ===
+{
+  "id" : 3,
+  "nome" : "Prato ruim",
+  "categoria" : "Pizza",
+  "telefone" : "11777777777",
+  "taxaEntrega" : 4.9,
+  "tempoEntregaMinutos" : 35,
+  "ativo" : true
+}

@@ -9,6 +9,7 @@ import com.deliverytech.delivery.service.PedidoService;
 import com.deliverytech.delivery.service.ProdutoService;
 import com.deliverytech.delivery.service.RestauranteService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,7 @@ public class PedidoController {
     private final ClienteService clienteService;
     private final RestauranteService restauranteService;
     private final ProdutoService produtoService;
+    private final ModelMapper modelMapper;
 
     // 1. CRIAR PEDIDO (Simplificado - sem itens iniciais)
     @PostMapping
@@ -46,7 +48,7 @@ public class PedidoController {
 
         Pedido salvo = pedidoService.criar(pedido);
 
-        return ResponseEntity.ok(new PedidoResponse(
+        return ResponseEntity.status(201).body(new PedidoResponse(
                 salvo.getId(),
                 cliente.getId(),
                 restaurante.getId(),
@@ -239,5 +241,22 @@ public class PedidoController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(pedidosResp);
+    }
+
+    /**
+     * Converter Pedido para PedidoResponse usando ModelMapper
+     */
+    private PedidoResponse convertToPedidoResponse(Pedido pedido) {
+        PedidoResponse response = modelMapper.map(pedido, PedidoResponse.class);
+
+        // Mapear itens manualmente (relacionamento complexo)
+        if (pedido.getItens() != null) {
+            List<ItemPedidoResponse> itensResp = pedido.getItens().stream()
+                    .map(item -> modelMapper.map(item, ItemPedidoResponse.class))
+                    .collect(Collectors.toList());
+            response.setItens(itensResp);
+        }
+
+        return response;
     }
 }

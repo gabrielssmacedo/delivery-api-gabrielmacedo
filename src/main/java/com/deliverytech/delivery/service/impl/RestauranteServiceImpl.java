@@ -108,4 +108,61 @@ public class RestauranteServiceImpl implements RestauranteService {
                         }
                 );
     }
+
+    /**
+     * Calcular taxa de entrega baseada no restaurante e CEP
+     * Lógica simplificada para demonstração
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public BigDecimal calcularTaxaEntrega(Long restauranteId, String cep) {
+        log.info("Calculando taxa de entrega - Restaurante ID: {}, CEP: {}", restauranteId, cep);
+
+        // Buscar restaurante
+        Restaurante restaurante = restauranteRepository.findById(restauranteId)
+                .orElseThrow(() -> new RuntimeException("Restaurante não encontrado - ID: " + restauranteId));
+
+        // Verificar se restaurante está ativo
+        if (!restaurante.getAtivo()) {
+            throw new RuntimeException("Restaurante não está disponível para entrega");
+        }
+
+        // Lógica simplificada de cálculo baseada no CEP
+        BigDecimal taxaBase = restaurante.getTaxaEntrega();
+
+        // Simular cálculo por região do CEP
+        String primeirosDigitos = cep.substring(0, Math.min(2, cep.length()));
+
+        try {
+            int codigoRegiao = Integer.parseInt(primeirosDigitos);
+
+            // Lógica de exemplo:
+            // CEP 01xxx-xxx (centro) = taxa normal
+            // CEP 02xxx-xxx a 05xxx-xxx = taxa + 20%
+            // CEP 06xxx-xxx a 09xxx-xxx = taxa + 50%
+            // Outros = taxa + 100%
+
+            BigDecimal multiplicador;
+            if (codigoRegiao == 1) {
+                multiplicador = BigDecimal.ONE; // Taxa normal
+            } else if (codigoRegiao >= 2 && codigoRegiao <= 5) {
+                multiplicador = new BigDecimal("1.20"); // +20%
+            } else if (codigoRegiao >= 6 && codigoRegiao <= 9) {
+                multiplicador = new BigDecimal("1.50"); // +50%
+            } else {
+                multiplicador = new BigDecimal("2.00"); // +100%
+            }
+
+            BigDecimal taxaFinal = taxaBase.multiply(multiplicador).setScale(2, BigDecimal.ROUND_HALF_UP);
+
+            log.info("Taxa calculada: R$ {} (base: R$ {}, multiplicador: {})",
+                    taxaFinal, taxaBase, multiplicador);
+
+            return taxaFinal;
+
+        } catch (NumberFormatException e) {
+            log.warn("CEP inválido: {}, usando taxa base", cep);
+            return taxaBase;
+        }
+    }
 }

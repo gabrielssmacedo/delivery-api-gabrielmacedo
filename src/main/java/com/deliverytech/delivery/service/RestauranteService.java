@@ -53,4 +53,12 @@ public interface RestauranteService {
      * Inativar restaurante (soft delete)
      */
     void inativar(Long id);
+
+    /**
+     * Calcular taxa de entrega baseada no restaurante e CEP
+     * @param restauranteId ID do restaurante
+     * @param cep CEP de destino
+     * @return valor da taxa de entrega
+     */
+    BigDecimal calcularTaxaEntrega(Long restauranteId, String cep);
 }

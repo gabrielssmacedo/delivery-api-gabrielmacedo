@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -98,14 +99,14 @@ public class ClienteController {
 
     /**
      * Atualizar cliente
-     * PUT /clientes/{id}
+     * PUT /api/clientes/{id}
      */
     @PutMapping("/{id}")
     public ResponseEntity<?> atualizar(@PathVariable Long id,
-                                       @Valid @RequestBody Cliente cliente) {
+                                       @Valid @RequestBody ClienteRequest clienteRequest) { // ✅ ALTERAR: Cliente → ClienteRequest
         try {
             log.info("Recebida requisição para atualizar cliente ID: {}", id);
-            Cliente clienteAtualizado = clienteService.atualizar(id, cliente);
+            Cliente clienteAtualizado = clienteService.atualizar(id, clienteRequest); // ✅ ALTERAR se o service suportar
             return ResponseEntity.ok(clienteAtualizado);
         } catch (IllegalArgumentException e) {
             log.warn("Erro de validação ao atualizar cliente: {}", e.getMessage());
@@ -132,6 +133,33 @@ public class ClienteController {
             return ResponseEntity.badRequest().body("Erro: " + e.getMessage());
         } catch (Exception e) {
             log.error("Erro interno ao inativar cliente", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro interno do servidor");
+        }
+    }
+
+    /**
+     * Ativar/Desativar cliente (toggle status ativo)
+     * PATCH /api/clientes/{id}/status
+     */
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<?> ativarDesativarCliente(@PathVariable Long id) {
+        try {
+            log.info("Recebida requisição para alterar status do cliente ID: {}", id);
+            Cliente clienteAtualizado = clienteService.ativarDesativarCliente(id);
+
+            String status = clienteAtualizado.getAtivo() ? "ativado" : "desativado";
+            return ResponseEntity.ok()
+                    .body(Map.of(
+                            "mensagem", "Cliente " + status + " com sucesso",
+                            "cliente", clienteAtualizado
+                    ));
+
+        } catch (IllegalArgumentException e) {
+            log.warn("Erro ao alterar status do cliente: {}", e.getMessage());
+            return ResponseEntity.badRequest().body("Erro: " + e.getMessage());
+        } catch (Exception e) {
+            log.error("Erro interno ao alterar status do cliente", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Erro interno do servidor");
         }

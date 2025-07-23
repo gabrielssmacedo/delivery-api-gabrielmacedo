@@ -1,0 +1,34 @@
+=== ENTREGA - TESTE DE ENDPOINT ===
+Data/Hora: 22/07/2025 20:00:34
+Método: GET
+URL Completa: http://localhost:8080/api/clientes
+Status HTTP: 200
+Content-Type: application/json
+
+
+=== RESPOSTA REAL ===
+[ {
+  "id" : 1,
+  "nome" : "João Silva",
+  "telefone" : null,
+  "endereco" : null,
+  "email" : "joao@email.com",
+  "ativo" : true,
+  "dataCriacao" : "2025-07-22T19:45:25.95105"
+}, {
+  "id" : 2,
+  "nome" : "Maria Santos",
+  "telefone" : null,
+  "endereco" : null,
+  "email" : "maria@email.com",
+  "ativo" : true,
+  "dataCriacao" : "2025-07-22T19:45:25.95105"
+}, {
+  "id" : 4,
+  "nome" : "Super Xandão",
+  "telefone" : "11999999999",
+  "endereco" : "Rua dos Asfaltos, 123",
+  "email" : "xandao@email.com",
+  "ativo" : true,
+  "dataCriacao" : "2025-07-22T19:56:56.418939"
+} ]

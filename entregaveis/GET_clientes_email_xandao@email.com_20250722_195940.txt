@@ -1,0 +1,18 @@
+=== ENTREGA - TESTE DE ENDPOINT ===
+Data/Hora: 22/07/2025 19:59:40
+Método: GET
+URL Completa: http://localhost:8080/api/clientes/email/xandao@email.com
+Status HTTP: 200
+Content-Type: application/json
+
+
+=== RESPOSTA REAL ===
+{
+  "id" : 4,
+  "nome" : "Super Xandão",
+  "telefone" : "11999999999",
+  "endereco" : "Rua dos Asfaltos, 123",
+  "email" : "xandao@email.com",
+  "ativo" : true,
+  "dataCriacao" : "2025-07-22T19:56:56.418939"
+}

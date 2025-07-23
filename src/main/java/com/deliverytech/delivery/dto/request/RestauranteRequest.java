@@ -19,8 +19,10 @@ public class RestauranteRequest {
     @NotBlank
     private String endereco;
 
-    @NotNull
+
     @DecimalMin("0.0")
+    @NotNull(message = "Taxa de entrega é obrigatória")
+    @Positive(message = "Taxa de entrega deve ser positiva")
     private BigDecimal taxaEntrega;
 
     @NotNull
@@ -29,4 +31,8 @@ public class RestauranteRequest {
 
     private String telefone;
     private String email;
+
+    @Positive(message = "Avaliação deve ser positiva")
+    @DecimalMax(value = "5.0", message = "Avaliação máxima é 5.0")
+    private BigDecimal avaliacao;
 }
