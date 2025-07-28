@@ -1,0 +1,17 @@
+=== ENTREGA - TESTE DE ENDPOINT ===
+Data/Hora: 23/07/2025 21:27:18
+Método: GET
+URL Completa: http://localhost:8080/api/produtos
+Status HTTP: 200
+Content-Type: application/json
+
+
+=== RESPOSTA REAL ===
+[ {
+  "id" : 5,
+  "nome" : "Feijoada",
+  "categoria" : "Almoço",
+  "descricao" : "Feijoada brasileira, arroz, farofa e couve",
+  "preco" : 50.0,
+  "disponivel" : true
+} ]

@@ -1,0 +1,34 @@
+=== ENTREGA - TESTE DE ENDPOINT ===
+Data/Hora: 24/07/2025 20:59:49
+Método: POST
+URL Completa: http://localhost:8080/api/pedidos/calcular
+Status HTTP: 200
+Content-Type: application/json
+
+=== DADOS ENVIADOS ===
+{
+  "clienteId" : 1,
+  "restauranteId" : 1,
+  "enderecoEntrega" : {
+    "numero" : "34",
+    "bairro" : "Nóis vai dc",
+    "cidade" : "Balneário Cambarui",
+    "estado" : "Santa Catarina",
+    "cep" : "08285-065",
+    "complemento" : "123 B",
+    "rua" : "Rua das Orações"
+  },
+  "itens" : [ {
+    "produtoId" : 1,
+    "quantidade" : 2
+  } ]
+}
+
+=== RESPOSTA REAL ===
+{
+  "subtotal" : 51.8,
+  "restaurante" : "Pizza Express",
+  "valorTotal" : 55.3,
+  "taxaEntrega" : 3.5,
+  "moeda" : "BRL"
+}

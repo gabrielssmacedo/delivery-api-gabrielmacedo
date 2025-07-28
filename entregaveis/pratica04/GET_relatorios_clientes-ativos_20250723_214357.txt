@@ -1,0 +1,18 @@
+=== ENTREGA - TESTE DE ENDPOINT ===
+Data/Hora: 23/07/2025 21:43:57
+Método: GET
+URL Completa: http://localhost:8080/api/relatorios/clientes-ativos?limite=10
+Status HTTP: 200
+Content-Type: application/json
+
+
+=== RESPOSTA REAL ===
+[ {
+  "quantidadePedidos" : 12,
+  "cliente" : "João Silva",
+  "totalGasto" : 600.0
+}, {
+  "quantidadePedidos" : 8,
+  "cliente" : "Maria Santos",
+  "totalGasto" : 450.0
+} ]

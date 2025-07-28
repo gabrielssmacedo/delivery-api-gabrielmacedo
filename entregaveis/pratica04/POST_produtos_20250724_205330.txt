@@ -1,0 +1,25 @@
+=== ENTREGA - TESTE DE ENDPOINT ===
+Data/Hora: 24/07/2025 20:53:30
+Método: POST
+URL Completa: http://localhost:8080/api/produtos
+Status HTTP: 201
+Content-Type: application/json
+
+=== DADOS ENVIADOS ===
+{
+  "nome" : "Pizza Requeijão",
+  "categoria" : "Pizza",
+  "descricao" : "Pizza com muito requeijão",
+  "preco" : 26.8,
+  "restauranteId" : 1
+}
+
+=== RESPOSTA REAL ===
+{
+  "id" : 11,
+  "nome" : "Pizza Requeijão",
+  "categoria" : "Pizza",
+  "descricao" : "Pizza com muito requeijão",
+  "preco" : 26.8,
+  "disponivel" : true
+}

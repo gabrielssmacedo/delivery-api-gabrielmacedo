@@ -1,0 +1,29 @@
+=== ENTREGA - TESTE DE ENDPOINT ===
+Data/Hora: 23/07/2025 20:56:38
+Método: PUT
+URL Completa: http://localhost:8080/api/restaurantes/3
+Status HTTP: 200
+Content-Type: application/json
+
+=== DADOS ENVIADOS ===
+{
+  "nome" : "Braziliando Food",
+  "categoria" : "Brasileira",
+  "endereco" : "Avenida Brasil, 539",
+  "taxaEntrega" : 5.5,
+  "tempoEntregaMinutos" : 15,
+  "telefone" : "11987654321",
+  "email" : "braziliandofood@gmail.com",
+  "avaliacao" : 5
+}
+
+=== RESPOSTA REAL ===
+{
+  "id" : 3,
+  "nome" : "Braziliando Food",
+  "categoria" : "Brasileira",
+  "telefone" : "11987654321",
+  "taxaEntrega" : 5.5,
+  "tempoEntregaMinutos" : 15,
+  "ativo" : true
+}

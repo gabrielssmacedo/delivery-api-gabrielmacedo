@@ -1,0 +1,15 @@
+=== ENTREGA - TESTE DE ENDPOINT ===
+Data/Hora: 23/07/2025 20:59:10
+Método: GET
+URL Completa: http://localhost:8080/api/restaurantes/2/taxa-entrega/08285065
+Status HTTP: 200
+Content-Type: application/json
+
+
+=== RESPOSTA REAL ===
+{
+  "restauranteId" : 2,
+  "taxaEntrega" : 7.5,
+  "moeda" : "BRL",
+  "cep" : "08285065"
+}

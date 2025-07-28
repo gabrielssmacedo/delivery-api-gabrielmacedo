@@ -1,0 +1,24 @@
+=== ENTREGA - TESTE DE ENDPOINT ===
+Data/Hora: 23/07/2025 20:57:11
+Método: PATCH
+URL Completa: http://localhost:8080/api/restaurantes/3/status
+Status HTTP: 200
+Content-Type: application/json
+
+=== DADOS ENVIADOS ===
+{
+  "additionalProp1" : true,
+  "additionalProp2" : true,
+  "additionalProp3" : true
+}
+
+=== RESPOSTA REAL ===
+{
+  "id" : 3,
+  "nome" : "Braziliando Food",
+  "categoria" : "Brasileira",
+  "telefone" : "11987654321",
+  "taxaEntrega" : 5.5,
+  "tempoEntregaMinutos" : 15,
+  "ativo" : null
+}

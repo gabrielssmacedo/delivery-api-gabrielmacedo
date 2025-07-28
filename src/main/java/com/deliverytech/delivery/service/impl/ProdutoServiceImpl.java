@@ -26,7 +26,7 @@ public class ProdutoServiceImpl implements ProdutoService {
         validarPreco(produto.getPreco());
 
         // MELHORADO: Definir disponível como true por padrão
-        if (!produto.getDisponivel()) {
+        if (produto.getDisponivel() == null) {
             produto.setDisponivel(true);
         }
 
@@ -134,5 +134,13 @@ public class ProdutoServiceImpl implements ProdutoService {
         if (preco.compareTo(precoMaximo) > 0) {
             throw new IllegalArgumentException("Preço não pode ser superior a R$ 99.999,99");
         }
+    }
+
+    @Override
+    public List<Produto> buscarPorNome(String nome) {
+        if (nome == null || nome.trim().isEmpty()) {
+            return List.of(); // Retorna lista vazia se nome for nulo ou vazio
+        }
+        return produtoRepository.findByNomeContainingIgnoreCase(nome.trim());
     }
 }

@@ -1,0 +1,31 @@
+=== ENTREGA - TESTE DE ENDPOINT ===
+Data/Hora: 23/07/2025 19:34:07
+Método: PATCH
+URL Completa: http://localhost:8080/api/pedidos/1/status
+Status HTTP: 200
+Content-Type: application/json
+
+=== DADOS ENVIADOS ===
+{
+  "status" : "CONFIRMADO"
+}
+
+=== RESPOSTA REAL ===
+{
+  "id" : 1,
+  "clienteId" : 1,
+  "restauranteId" : 1,
+  "enderecoEntrega" : {
+    "numero" : "350",
+    "bairro" : "José Aldo",
+    "cidade" : "Campo Grande",
+    "estado" : "Mato Grosso do Sul",
+    "cep" : "79073553",
+    "complemento" : "Casa",
+    "rua" : "cafezais"
+  },
+  "valorTotal" : 0.0,
+  "status" : "CONFIRMADO",
+  "dataPedido" : "2025-07-23T19:27:02.269078",
+  "itens" : [ ]
+}

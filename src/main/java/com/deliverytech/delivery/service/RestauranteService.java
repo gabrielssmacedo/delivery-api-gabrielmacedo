@@ -61,4 +61,10 @@ public interface RestauranteService {
      * @return valor da taxa de entrega
      */
     BigDecimal calcularTaxaEntrega(Long restauranteId, String cep);
+
+    Restaurante alterarStatus(Long id, Boolean ativo);
+
+    List<Restaurante> buscarProximos(String cep);
+
+    List<Restaurante> listarComFiltros(String categoria, Boolean ativo);
 }

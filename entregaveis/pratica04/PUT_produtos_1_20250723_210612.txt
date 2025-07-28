@@ -1,0 +1,25 @@
+=== ENTREGA - TESTE DE ENDPOINT ===
+Data/Hora: 23/07/2025 21:06:12
+Método: PUT
+URL Completa: http://localhost:8080/api/produtos/1
+Status HTTP: 200
+Content-Type: application/json
+
+=== DADOS ENVIADOS ===
+{
+  "nome" : "Feijoada Brasileira",
+  "categoria" : "Prato Feito",
+  "descricao" : "Feijoada, arroz, farofa, couve e banana a milanesa",
+  "preco" : 45.99,
+  "restauranteId" : 3
+}
+
+=== RESPOSTA REAL ===
+{
+  "id" : 1,
+  "nome" : "Feijoada Brasileira",
+  "categoria" : "Prato Feito",
+  "descricao" : "Feijoada, arroz, farofa, couve e banana a milanesa",
+  "preco" : 45.99,
+  "disponivel" : true
+}

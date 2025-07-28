@@ -1,0 +1,18 @@
+=== ENTREGA - TESTE DE ENDPOINT ===
+Data/Hora: 23/07/2025 22:03:01
+Método: GET
+URL Completa: http://localhost:8080/api/relatorios/vendas-por-restaurante?dataInicio=2025-02-02&dataFim=2025-10-02
+Status HTTP: 200
+Content-Type: application/json
+
+
+=== RESPOSTA REAL ===
+[ {
+  "totalVendas" : 1500.0,
+  "quantidadePedidos" : 25,
+  "restaurante" : "Restaurante A"
+}, {
+  "totalVendas" : 1200.0,
+  "quantidadePedidos" : 18,
+  "restaurante" : "Restaurante B"
+} ]

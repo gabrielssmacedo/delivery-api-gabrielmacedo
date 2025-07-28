@@ -15,7 +15,6 @@ import java.util.Optional;
 @Repository
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
-    // ✅ ADICIONAR: Métodos básicos
     List<Pedido> findByClienteId(Long clienteId);
     List<Pedido> findByRestauranteId(Long restauranteId);
     List<Pedido> findByStatus(StatusPedido status);
@@ -54,5 +53,19 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
             "FROM Pedido p " +
             "GROUP BY p.restaurante.nome")
     List<RelatorioVendas> obterRelatorioVendasPorRestaurante();
-}
 
+    /**
+     * Buscar por status e período
+     */
+    List<Pedido> findByStatusAndDataPedidoBetween(StatusPedido status, LocalDateTime inicio, LocalDateTime fim);
+
+    /**
+     * Buscar pedidos a partir de uma data
+     */
+    List<Pedido> findByDataPedidoGreaterThanEqual(LocalDateTime data);
+
+    /**
+     * Buscar pedidos até uma data
+     */
+    List<Pedido> findByDataPedidoLessThanEqual(LocalDateTime data);
+}

@@ -1,0 +1,18 @@
+=== ENTREGA - TESTE DE ENDPOINT ===
+Data/Hora: 23/07/2025 20:55:08
+Método: GET
+URL Completa: http://localhost:8080/api/restaurantes/categoria/Brasileira
+Status HTTP: 200
+Content-Type: application/json
+
+
+=== RESPOSTA REAL ===
+[ {
+  "id" : 3,
+  "nome" : "Braziliando",
+  "categoria" : "Brasileira",
+  "telefone" : "11987654321",
+  "taxaEntrega" : 4.8,
+  "tempoEntregaMinutos" : 10,
+  "ativo" : true
+} ]

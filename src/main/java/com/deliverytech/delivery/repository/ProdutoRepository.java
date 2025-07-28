@@ -3,15 +3,17 @@ package com.deliverytech.delivery.repository;
 import com.deliverytech.delivery.model.Produto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-@Repository
 public interface ProdutoRepository extends JpaRepository<Produto, Long> {
     List<Produto> findByRestauranteId(Long restauranteId);
     List<Produto> findByDisponivelTrue();
     List<Produto> findByCategoria(String categoria);
+
+    @Query("SELECT p FROM Produto p WHERE LOWER(p.nome) LIKE LOWER(CONCAT('%', :nome, '%'))")
+    List<Produto> findByNomeContainingIgnoreCase(@Param("nome") String nome);
 
     @Query(value = "SELECT p.nome, COUNT(ip.produto_id) as quantidade_vendida " +
             "FROM produto p " +

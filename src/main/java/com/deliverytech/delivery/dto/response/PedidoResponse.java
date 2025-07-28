@@ -16,7 +16,7 @@ public class PedidoResponse {
     private Long clienteId;
     private Long restauranteId;
     private Endereco enderecoEntrega;
-    private BigDecimal total;
+    private BigDecimal valorTotal;
     private StatusPedido status;
     private LocalDateTime dataPedido;
     private List<ItemPedidoResponse> itens;
