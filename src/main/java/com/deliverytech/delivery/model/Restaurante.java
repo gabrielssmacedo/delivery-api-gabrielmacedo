@@ -1,5 +1,6 @@
 package com.deliverytech.delivery.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
@@ -37,5 +38,10 @@ public class Restaurante {
     // Mudança 16/07
     @OneToMany(mappedBy = "restaurante")
     private List<Pedido> pedidos;
+
+    @JsonIgnore
+    public void inativar() {
+        this.ativo = false;
+    }
 
 }

@@ -43,8 +43,9 @@ public class PedidoServiceImpl implements PedidoService {
     // ✅ IMPLEMENTAR métodos básicos se não existirem
     @Override
     @Transactional(readOnly = true)
-    public Optional<Pedido> buscarPorId(Long id) {
-        return pedidoRepository.findById(id);
+    public Pedido buscarPorId(Long id) {
+        return pedidoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
     }
 
     @Override

@@ -1,0 +1,42 @@
+=== ENTREGA - TESTE DE ENDPOINT ===
+Data/Hora: 31/07/2025 19:36:49
+Método: GET
+URL Completa: http://localhost:8080/api/clientes
+Status HTTP: 200
+Content-Type: application/json
+
+
+=== RESPOSTA REAL ===
+[ {
+  "id" : 1,
+  "nome" : "João Silva",
+  "telefone" : "11987654321",
+  "endereco" : "Rua das Flores, 123 - Vila Madalena, São Paulo - SP",
+  "email" : "joao@email.com",
+  "ativo" : true,
+  "dataCriacao" : "2025-07-31T19:33:47.455431"
+}, {
+  "id" : 2,
+  "nome" : "Maria Santos",
+  "telefone" : "11876543210",
+  "endereco" : "Av. Paulista, 456 - Bela Vista, São Paulo - SP",
+  "email" : "maria@email.com",
+  "ativo" : true,
+  "dataCriacao" : "2025-07-31T19:33:47.455431"
+}, {
+  "id" : 4,
+  "nome" : "Ana Costa",
+  "telefone" : "11654321098",
+  "endereco" : "Rua Oscar Freire, 321 - Jardins, São Paulo - SP",
+  "email" : "ana@email.com",
+  "ativo" : true,
+  "dataCriacao" : "2025-07-31T19:33:47.455431"
+}, {
+  "id" : 5,
+  "nome" : "Carlos Ferreira",
+  "telefone" : "11543210987",
+  "endereco" : "Rua 25 de Março, 654 - Centro, São Paulo - SP",
+  "email" : "carlos@email.com",
+  "ativo" : true,
+  "dataCriacao" : "2025-07-31T19:33:47.455431"
+} ]

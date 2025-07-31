@@ -15,7 +15,7 @@ public interface PedidoService {
 
     // === OPERAÇÕES BÁSICAS ===
     Pedido criar(Pedido pedido);
-    Optional<Pedido> buscarPorId(Long id);
+    Pedido buscarPorId(Long id);
 
     // === BUSCAS ESPECÍFICAS ===
     List<Pedido> buscarPorCliente(Long clienteId);

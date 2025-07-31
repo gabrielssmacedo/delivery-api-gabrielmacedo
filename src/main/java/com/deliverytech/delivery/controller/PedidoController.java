@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.Arrays;
+
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 
@@ -76,8 +76,10 @@ public class PedidoController {
     @Transactional(readOnly = true) // ✅ ADICIONAR
     @GetMapping("/{id}")
     public ResponseEntity<PedidoResponse> buscarPorId(@PathVariable Long id) {
-        Pedido pedido = pedidoService.buscarPorId(id)
-                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+        Pedido pedido = pedidoService.buscarPorId(id);
+        if (pedido == null) {
+            throw new RuntimeException("Pedido não encontrado");
+        }
 
         List<ItemPedidoResponse> itensResp = pedido.getItens() != null ?
                 pedido.getItens().stream()
@@ -125,17 +127,13 @@ public class PedidoController {
     public ResponseEntity<PedidoResponse> adicionarItem(@PathVariable Long pedidoId,
                                                         @RequestParam Long produtoId,
                                                         @RequestParam Integer quantidade) {
-        Pedido pedido = pedidoService.buscarPorId(pedidoId)
-                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
-
-        if (pedido.getStatus() != StatusPedido.CRIADO) {
-            throw new RuntimeException("Não é possível adicionar itens a um pedido confirmado");
-        }
-
         Produto produto = produtoService.buscarPorId(produtoId)
                 .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
 
         Pedido pedidoAtualizado = pedidoService.adicionarItem(pedidoId, produtoId, quantidade);
+
+        // Se necessário, você pode validar o status do pedido dentro do serviço adicionarItem
+        // ou lançar uma exceção apropriada se não for permitido adicionar itens.
 
         List<ItemPedidoResponse> itensResp = pedidoAtualizado.getItens().stream()
                 .map(i -> new ItemPedidoResponse(i.getProduto().getId(), i.getProduto().getNome(), i.getQuantidade(), i.getPrecoUnitario()))
@@ -157,8 +155,10 @@ public class PedidoController {
     @Transactional
     @PutMapping("/{id}/confirmar")
     public ResponseEntity<PedidoResponse> confirmar(@PathVariable Long id) {
-        Pedido pedido = pedidoService.buscarPorId(id)
-                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+        Pedido pedido = pedidoService.buscarPorId(id);
+        if (pedido == null) {
+            throw new RuntimeException("Pedido não encontrado");
+        }
 
         if (pedido.getStatus() != StatusPedido.CRIADO) {
             throw new RuntimeException("Pedido já foi confirmado ou cancelado");
@@ -254,6 +254,7 @@ public class PedidoController {
      * Atualizar status do pedido
      * PATCH /api/pedidos/{id}/status
      */
+    @Transactional
     @PatchMapping("/{id}/status")
     public ResponseEntity<PedidoResponse> atualizarStatus(@PathVariable Long id,
                                                           @Valid @RequestBody StatusUpdateRequest request) {
@@ -270,8 +271,10 @@ public class PedidoController {
             }
 
             // ADICIONAR APENAS ESTAS 4 LINHAS:
-            Pedido pedido = pedidoService.buscarPorId(id)
-                    .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+            Pedido pedido = pedidoService.buscarPorId(id);
+            if (pedido == null) {
+                throw new RuntimeException("Pedido não encontrado");
+            }
 
             validarTransicaoStatus(pedido.getStatus(), status);
             // FIM DA ADIÇÃO

@@ -1,8 +1,12 @@
 package com.deliverytech.delivery.model;
 
-public enum Role {
-    CLIENTE,
-    RESTAURANTE,
-    ADMIN,
-    ENTREGADOR
+import org.springframework.security.core.GrantedAuthority;
+
+public enum Role implements GrantedAuthority {
+    ADMIN, CLIENTE, RESTAURANTE, ENTREGADOR,USER;
+
+    @Override
+    public String getAuthority() {
+        return name();
+    }
 }

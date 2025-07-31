@@ -2,6 +2,7 @@ package com.deliverytech.delivery.controller;
 
 import com.deliverytech.delivery.model.Cliente;
 import com.deliverytech.delivery.dto.request.ClienteRequest; // ✅ ADICIONAR IMPORT
+import com.deliverytech.delivery.dto.response.ApiResponseWrapper;
 import com.deliverytech.delivery.service.ClienteService; // ✅ INTERFACE
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,14 +60,15 @@ public class ClienteController {
      * GET /clientes/{id}
      */
     @GetMapping("/{id}")
-    public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<ApiResponseWrapper<Cliente>> buscarPorId(@PathVariable Long id) {
         log.info("Recebida requisição para buscar cliente ID: {}", id);
         Optional<Cliente> cliente = clienteService.buscarPorId(id);
 
         if (cliente.isPresent()) {
-            return ResponseEntity.ok(cliente.get());
+            return ResponseEntity.ok(ApiResponseWrapper.success(cliente.get(), "Cliente encontrado"));
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponseWrapper.error("Cliente não encontrado"));
         }
     }
 

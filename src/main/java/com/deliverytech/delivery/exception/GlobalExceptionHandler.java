@@ -1,4 +1,4 @@
-package com.deliverytech.delivery.exceptions;
+package com.deliverytech.delivery.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

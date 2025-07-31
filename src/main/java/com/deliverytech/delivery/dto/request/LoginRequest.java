@@ -1,17 +1,14 @@
 package com.deliverytech.delivery.dto.request;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok.Data;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class LoginRequest {
-    @Email
-    @NotBlank
-    private String email;
 
-    @NotBlank
-    private String senha;
+    @NotBlank(message = "Username é obrigatório")
+    private String username;
+
+    @NotBlank(message = "Password é obrigatório")
+    private String password;
 }

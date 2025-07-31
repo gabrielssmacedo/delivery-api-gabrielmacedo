@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -28,11 +31,8 @@ public class Cliente {
     @Builder.Default
     private LocalDateTime dataCriacao = LocalDateTime.now();
 
-    // REMOVER ESTES MÉTODOS - Deixar o Lombok gerar automaticamente
-    // public void setTelefone(String string) { ... }
-    // public void setEndereco(String string) { ... }
-
     // IMPLEMENTAR APENAS O MÉTODO PERSONALIZADO
+    @JsonIgnore
     public void inativar() {
         this.ativo = false;
     }
@@ -40,4 +40,16 @@ public class Cliente {
     // Comentário mantido para referência futura
     /* @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
     private List<Pedido> pedidos; */
+
+    // Construtor customizado para testes
+    public Cliente(Long id, String nome, String email, String telefone, String endereco, LocalDateTime dataCriacao, Boolean ativo, Object unused) {
+        this.id = id;
+        this.nome = nome;
+        this.email = email;
+        this.telefone = telefone;
+        this.endereco = endereco;
+        this.dataCriacao = dataCriacao;
+        this.ativo = ativo;
+        // O parâmetro 'unused' é ignorado
+    }
 }
