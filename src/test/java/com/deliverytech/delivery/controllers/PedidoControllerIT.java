@@ -1,4 +1,4 @@
-package com.deliverytech.delivery.controller;
+package com.deliverytech.delivery.controllers;
 
 import com.deliverytech.delivery.dto.request.ItemPedidoRequest;
 import com.deliverytech.delivery.dto.request.PedidoRequest;

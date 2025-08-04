@@ -50,8 +50,8 @@ public class DataLoader implements CommandLineRunner {
         System.out.println("--- Inserindo clientes ---");
 
         Cliente cliente1 = new Cliente();
-        cliente1.setNome("João Silva");
-        cliente1.setEmail("joao@email.com");
+        cliente1.setNome("Roberto Silva");
+        cliente1.setEmail("roberto@email.com");
         cliente1.setTelefone("11987654321");
         cliente1.setEndereco("Rua das Flores, 123 - Vila Madalena, São Paulo - SP");
         cliente1.setAtivo(true);
