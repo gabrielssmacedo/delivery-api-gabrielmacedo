@@ -3,12 +3,14 @@ package com.deliverytech.delivery.service;
 import com.deliverytech.delivery.dto.request.ClienteRequest;
 import com.deliverytech.delivery.model.Cliente;
 
+
 import java.util.List;
 import java.util.Optional;
 
 /**
  * Interface de serviços para gerenciamento de clientes
  */
+
 public interface ClienteService {
 
 
@@ -40,4 +42,3 @@ public interface ClienteService {
     Cliente ativarDesativarCliente(Long id);
 
 }
-
